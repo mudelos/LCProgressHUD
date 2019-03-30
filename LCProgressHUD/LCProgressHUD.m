@@ -101,6 +101,7 @@
     [hud show:YES];
     [hud setShowNow:YES];
     [hud setLabelText:text];
+    [hud setDetailsLabelText:@""];
     [hud setMinSize:CGSizeZero];
     [hud setMode:MBProgressHUDModeText];
     [hud setRemoveFromSuperViewOnHide:YES];
@@ -136,5 +137,22 @@
     [[LCProgressHUD sharedHUD] setShowNow:NO];
     [[LCProgressHUD sharedHUD] hide:YES];
 }
+
++ (void)showDetail:(NSString *)text{
+    LCProgressHUD *hud = [LCProgressHUD sharedHUD];
+    [hud show:YES];
+    [hud setShowNow:YES];
+    [hud setLabelText:@""];
+    [hud setDetailsLabelText:text];
+    [hud setMinSize:CGSizeZero];
+    [hud setMode:MBProgressHUDModeText];
+    [hud setRemoveFromSuperViewOnHide:YES];
+    [hud setDetailsLabelFont:[UIFont boldSystemFontOfSize:TEXT_SIZE]];
+    [[UIApplication sharedApplication].keyWindow addSubview:hud];
+    //    [hud hide:YES afterDelay:1.0f];
+    
+    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(hide) userInfo:nil repeats:NO];
+}
+
 
 @end

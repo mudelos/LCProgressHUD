@@ -61,4 +61,7 @@ typedef NS_ENUM(NSInteger, LCProgressHUDStatus) {
 /** 手动隐藏 HUD */
 + (void)hide;
 
+/** 在 window 上添加一个只显示文字，但可以换行的 HUD */
++ (void)showDetail:(NSString *)text;
+
 @end
