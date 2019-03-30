@@ -27,6 +27,7 @@
     [hud show:YES];
     [hud setShowNow:YES];
     [hud setLabelText:text];
+    [hud setDetailsLabelText:@""];
     [hud setRemoveFromSuperViewOnHide:YES];
     [hud setLabelFont:[UIFont boldSystemFontOfSize:TEXT_SIZE]];
     [hud setMinSize:CGSizeMake(BGVIEW_WIDTH, BGVIEW_WIDTH)];
