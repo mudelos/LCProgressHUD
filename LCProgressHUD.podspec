@@ -13,6 +13,6 @@ Pod::Spec.new do |s|
   s.resource     = 'LCProgressHUD/LCProgressHUD.bundle'
   s.requires_arc = true
 
-  s.dependency "MBProgressHUD", "~> 0.9.2"
+  s.dependency "MBProgressHUD"
 
 end
