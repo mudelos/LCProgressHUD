@@ -16,7 +16,7 @@
     static LCProgressHUD *hud;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        hud = [[self alloc] initWithWindow:[UIApplication sharedApplication].keyWindow];
+        hud = [[self alloc] initWithView:[UIApplication sharedApplication].keyWindow];
     });
     return hud;
 }
@@ -24,12 +24,12 @@
 + (void)showStatus:(LCProgressHUDStatus)status text:(NSString *)text {
 
     LCProgressHUD *hud = [LCProgressHUD sharedHUD];
-    [hud show:YES];
+    [hud showAnimated:YES];
     [hud setShowNow:YES];
-    [hud setLabelText:text];
-    [hud setDetailsLabelText:@""];
+    hud.label.text = text;
+    hud.detailsLabel.text = @"";
     [hud setRemoveFromSuperViewOnHide:YES];
-    [hud setLabelFont:[UIFont boldSystemFontOfSize:TEXT_SIZE]];
+    hud.label.font = [UIFont boldSystemFontOfSize:TEXT_SIZE];
     [hud setMinSize:CGSizeMake(BGVIEW_WIDTH, BGVIEW_WIDTH)];
     [[UIApplication sharedApplication].keyWindow addSubview:hud];
 
@@ -45,7 +45,7 @@
             hud.mode = MBProgressHUDModeCustomView;
             UIImageView *sucView = [[UIImageView alloc] initWithImage:sucImage];
             hud.customView = sucView;
-            [hud hide:YES afterDelay:1.0f];
+            [hud hideAnimated:YES afterDelay:1.0f];
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [hud setShowNow:NO];
@@ -61,7 +61,7 @@
             hud.mode = MBProgressHUDModeCustomView;
             UIImageView *errView = [[UIImageView alloc] initWithImage:errImage];
             hud.customView = errView;
-            [hud hide:YES afterDelay:1.0f];
+            [hud hideAnimated:YES afterDelay:1.0f];
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [hud setShowNow:NO];
@@ -83,7 +83,7 @@
             hud.mode = MBProgressHUDModeCustomView;
             UIImageView *infoView = [[UIImageView alloc] initWithImage:infoImage];
             hud.customView = infoView;
-            [hud hide:YES afterDelay:1.0f];
+            [hud hideAnimated:YES afterDelay:1.0f];
             
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 [hud setShowNow:NO];
@@ -97,62 +97,108 @@
 }
 
 + (void)showMessage:(NSString *)text {
+    
+    if (NSThread.currentThread.isMainThread) {
+        LCProgressHUD *hud = [LCProgressHUD sharedHUD];
+        [hud showAnimated:YES];
+        [hud setShowNow:YES];
+        hud.label.text = text;
+        hud.detailsLabel.text = @"";
+        [hud setMinSize:CGSizeZero];
+        [hud setMode:MBProgressHUDModeText];
+        [hud setRemoveFromSuperViewOnHide:YES];
+        hud.label.font = [UIFont boldSystemFontOfSize:TEXT_SIZE];
+        [[UIApplication sharedApplication].keyWindow addSubview:hud];
+        //    [hud hide:YES afterDelay:1.0f];
+        
+        [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(hide) userInfo:nil repeats:NO];
+    }else{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [LCProgressHUD showMessage:text];
+        });
+    }
 
-    LCProgressHUD *hud = [LCProgressHUD sharedHUD];
-    [hud show:YES];
-    [hud setShowNow:YES];
-    [hud setLabelText:text];
-    [hud setDetailsLabelText:@""];
-    [hud setMinSize:CGSizeZero];
-    [hud setMode:MBProgressHUDModeText];
-    [hud setRemoveFromSuperViewOnHide:YES];
-    [hud setLabelFont:[UIFont boldSystemFontOfSize:TEXT_SIZE]];
-    [[UIApplication sharedApplication].keyWindow addSubview:hud];
-//    [hud hide:YES afterDelay:1.0f];
-
-    [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(hide) userInfo:nil repeats:NO];
 }
 
 + (void)showInfoMsg:(NSString *)text {
-
-    [self showStatus:LCProgressHUDStatusInfo text:text];
+    if (NSThread.currentThread.isMainThread) {
+        [self showStatus:LCProgressHUDStatusInfo text:text];
+    }else{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [LCProgressHUD showInfoMsg:text];
+        });
+    }
+    
 }
 
 + (void)showFailure:(NSString *)text {
-
-    [self showStatus:LCProgressHUDStatusError text:text];
+    if (NSThread.currentThread.isMainThread) {
+        [self showStatus:LCProgressHUDStatusError text:text];
+    }else{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [LCProgressHUD showFailure:text];
+        });
+    }
+    
 }
 
 + (void)showSuccess:(NSString *)text {
 
-    [self showStatus:LCProgressHUDStatusSuccess text:text];
+    if (NSThread.currentThread.isMainThread) {
+        [self showStatus:LCProgressHUDStatusSuccess text:text];
+    }else{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [LCProgressHUD showSuccess:text];
+        });
+    }
+    
 }
 
 + (void)showLoading:(NSString *)text {
-
-    [self showStatus:LCProgressHUDStatusWaitting text:text];
+    if (NSThread.currentThread.isMainThread) {
+        [self showStatus:LCProgressHUDStatusWaitting text:text];
+    }else{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [LCProgressHUD showLoading:text];
+        });
+    }
+    
 }
 
 + (void)hide {
-    
-    [[LCProgressHUD sharedHUD] setShowNow:NO];
-    [[LCProgressHUD sharedHUD] hide:YES];
+    if (NSThread.currentThread.isMainThread) {
+        [[LCProgressHUD sharedHUD] setShowNow:NO];
+        [[LCProgressHUD sharedHUD] hideAnimated:YES];
+    }else{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [LCProgressHUD hide];
+        });
+    }
 }
 
 + (void)showDetail:(NSString *)text{
-    LCProgressHUD *hud = [LCProgressHUD sharedHUD];
-    [hud show:YES];
-    [hud setShowNow:YES];
-    [hud setLabelText:@""];
-    [hud setDetailsLabelText:text];
-    [hud setMinSize:CGSizeZero];
-    [hud setMode:MBProgressHUDModeText];
-    [hud setRemoveFromSuperViewOnHide:YES];
-    [hud setDetailsLabelFont:[UIFont boldSystemFontOfSize:TEXT_SIZE]];
-    [[UIApplication sharedApplication].keyWindow addSubview:hud];
-    //    [hud hide:YES afterDelay:1.0f];
     
-    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(hide) userInfo:nil repeats:NO];
+    if (NSThread.currentThread.isMainThread) {
+        LCProgressHUD *hud = [LCProgressHUD sharedHUD];
+        [hud showAnimated:YES];
+        [hud setShowNow:YES];
+        hud.label.text = text;
+        hud.detailsLabel.text = @"";
+        [hud setMinSize:CGSizeZero];
+        [hud setMode:MBProgressHUDModeText];
+        [hud setRemoveFromSuperViewOnHide:YES];
+        hud.label.font = [UIFont boldSystemFontOfSize:TEXT_SIZE];
+        [[UIApplication sharedApplication].keyWindow addSubview:hud];
+        //    [hud hide:YES afterDelay:1.0f];
+        
+        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(hide) userInfo:nil repeats:NO];
+    }else{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [LCProgressHUD showDetail:text];
+        });
+    }
+    
+
 }
 
 
