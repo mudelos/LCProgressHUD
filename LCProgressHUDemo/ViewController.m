@@ -23,7 +23,7 @@
 
 - (IBAction)showText {
     
-    [LCProgressHUD showMessage:@"心有林夕"];
+    [LCProgressHUD showDetail:@"心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕心有林夕"];
     
     [NSTimer scheduledTimerWithTimeInterval:TIME
                                      target:self

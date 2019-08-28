@@ -182,12 +182,12 @@
         LCProgressHUD *hud = [LCProgressHUD sharedHUD];
         [hud showAnimated:YES];
         [hud setShowNow:YES];
-        hud.label.text = text;
-        hud.detailsLabel.text = @"";
+        hud.label.text = @"";
+        hud.detailsLabel.text = text;
         [hud setMinSize:CGSizeZero];
         [hud setMode:MBProgressHUDModeText];
         [hud setRemoveFromSuperViewOnHide:YES];
-        hud.label.font = [UIFont boldSystemFontOfSize:TEXT_SIZE];
+        hud.detailsLabel.font = [UIFont boldSystemFontOfSize:TEXT_SIZE];
         [[UIApplication sharedApplication].keyWindow addSubview:hud];
         //    [hud hide:YES afterDelay:1.0f];
         
