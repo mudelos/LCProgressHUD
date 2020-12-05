@@ -115,16 +115,22 @@
         LCProgressHUD *hud = [LCProgressHUD sharedHUD];
         [hud showAnimated:YES];
         [hud setShowNow:YES];
-        hud.label.text = text;
-        hud.detailsLabel.text = @"";
+        hud.label.text = @"";
+        hud.detailsLabel.text = text;
         [hud setMinSize:CGSizeZero];
         [hud setMode:MBProgressHUDModeText];
         [hud setRemoveFromSuperViewOnHide:YES];
         hud.label.font = [UIFont boldSystemFontOfSize:TEXT_SIZE];
+        hud.detailsLabel.font = [UIFont boldSystemFontOfSize:TEXT_SIZE];
         [[UIApplication sharedApplication].keyWindow addSubview:hud];
-        //    [hud hide:YES afterDelay:1.0f];
-
-        [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(hide) userInfo:nil repeats:NO];
+        CGFloat time = text.length / 15;
+        if (time < 1) {
+            time = 1;
+        }
+        if (time > 3) {
+            time = 3;
+        }
+        [NSTimer scheduledTimerWithTimeInterval:time target:self selector:@selector(hide) userInfo:nil repeats:NO];
     });
 }
 
